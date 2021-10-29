@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.5.0",
+    "@emotion/styled": "^11.3.0",
+    "@mui/material": "^5.0.4",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
@@ -22,10 +25,10 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
-    "fix":"npmrun-sformat&&npmrun-slint:fix",
-    "format":"prettier--write--loglevel=warn'src/**/*.{js,jsx,ts,tsx,gql,graphql,json}'",
+    "fix": "npmrun-sformat&&npmrun-slint:fix",
+    "format": "prettier--write--loglevel=warn'src/**/*.{js,jsx,ts,tsx,gql,graphql,json}'",
     "lint:fix": "eslint --fix 'src/**/*.{js,jsx,ts,tsx}'",
-    "lint:conflict":"eslint--print-config.eslintrc.js|eslint-config-prettier-check",
+    "lint:conflict": "eslint--print-config.eslintrc.js|eslint-config-prettier-check",
     "postinstall": "typesync"
   },
   "eslintConfig": {
@@ -57,6 +60,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.26.1",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "typesync": "^0.8.0"
   }
 }
