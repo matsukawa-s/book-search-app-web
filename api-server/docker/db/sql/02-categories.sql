@@ -1,6 +1,6 @@
 create table categories
 (
-    id int auto_increment,
+    id int unsigned auto_increment,
     name varchar(50) not null,
     id_deleted boolean default false not null,
     sort_number int not null,

@@ -1,8 +1,8 @@
 create table categorizations
 (
-    id int auto_increment,
-    book_id int not null,
-    category_id int not null,
+    id int unsigned auto_increment,
+    book_id int unsigned not null,
+    category_id int unsigned not null,
     constraint categorizations_pk
         primary key (id),
     constraint categorizations_books_id_fk
