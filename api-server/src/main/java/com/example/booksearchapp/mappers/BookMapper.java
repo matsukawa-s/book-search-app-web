@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface BookMapper {
     public List<Book> findAll();
+    public Book get(Integer id);
 }
