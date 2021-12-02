@@ -1,37 +1,34 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import Drawer from '@mui/material/Drawer';
-import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import PaginationRounded from '../molucules/Pagenation';
-import BasicTable from '../molucules/table';
-import ButtonAppBar from '../molucules/AppBar';
+// import PaginationRounded from '../molucules/Pagenation';
+
+import DataGridDemo from '../molucules/table';
 
 const drawerWidth = 240;
 
 const ClippedDrawer: React.FC = () => (
-  <Box sx={{ display: 'flex' }}>
-    <CssBaseline />
-    <ButtonAppBar />
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
+  <Grid container>
+    <Grid item xs={2}>
+      <Drawer
+        variant="permanent"
+        sx={{
           width: drawerWidth,
-          boxSizing: 'border-box',
-        },
-      }}
-    >
-      <Toolbar />
-      <Box sx={{ overflow: 'auto' }}>
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+      >
+        <Toolbar />
+
         <List>
           {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text) => (
             <ListItem button key={text}>
@@ -49,15 +46,11 @@ const ClippedDrawer: React.FC = () => (
             </ListItem>
           ))}
         </List>
-      </Box>
-    </Drawer>
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-      <Toolbar />
-      <Typography paragraph>
-        <BasicTable />
-        <PaginationRounded />
-      </Typography>
-    </Box>
-  </Box>
+      </Drawer>
+    </Grid>
+    <Grid item xs={10}>
+      <DataGridDemo />
+    </Grid>
+  </Grid>
 );
 export default ClippedDrawer;

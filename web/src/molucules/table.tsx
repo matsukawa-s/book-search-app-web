@@ -1,86 +1,131 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
-function createData(
-  name: string,
-  calories: string,
-  fat: string,
-  carbs: string,
-  protein: string,
-) {
-  return { name, calories, fat, carbs, protein };
-}
+const columns: GridColDef[] = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'img',
+    headerName: '画像',
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    renderCell: (params) => <img src={params.value} alt="" />,
+    width: 120,
+  },
+  {
+    field: 'bookName',
+    headerName: '書籍名',
+    width: 300,
+  },
 
-const rows = [
-  createData(
-    'JAVA',
-    'https://th.bing.com/th/id/OIP.D0ZsRhTh6cW1gyLCFmbcwQHaEm?pid=ImgDet&rs=1sample.jpg',
-    '易',
-    'JAVA',
-    '〇',
-  ),
-  createData(
-    'HTML',
-    'https://th.bing.com/th/id/OIP.D0ZsRhTh6cW1gyLCFmbcwQHaEm?pid=ImgDet&rs=1',
-    '易',
-    'WEB',
-    '×',
-  ),
-  createData(
-    'CSS',
-    'https://th.bing.com/th/id/OIP.D0ZsRhTh6cW1gyLCFmbcwQHaEm?pid=ImgDet&rs=1',
-    '易',
-    'WEB',
-    '〇',
-  ),
-  createData(
-    'React',
-    'https://th.bing.com/th/id/OIP.D0ZsRhTh6cW1gyLCFmbcwQHaEm?pid=ImgDet&rs=1',
-    '易',
-    'WEB',
-    '〇',
-  ),
-  createData(
-    'GO',
-    'https://th.bing.com/th/id/OIP.D0ZsRhTh6cW1gyLCFmbcwQHaEm?pid=ImgDet&rs=1',
-    '易',
-    'JAVA',
-    '〇',
-  ),
+  {
+    field: 'difficulty',
+    headerName: '難易度',
+    width: 100,
+  },
+  {
+    field: 'Genre',
+    headerName: 'ジャンル',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 100,
+  },
+  {
+    field: 'status',
+    headerName: '貸出状況',
+    description: 'This column has a value getter and is not sortable.',
+    sortable: false,
+    width: 100,
+  },
 ];
-const BasicTable: React.FC = () => (
-  <Table sx={{ minWidth: 1200 }} aria-label="simple table">
-    <TableHead>
-      <TableRow>
-        <TableCell align="center">画像</TableCell>
-        <TableCell align="center">書籍名</TableCell>
-        <TableCell align="center">難易度</TableCell>
-        <TableCell align="center">ジャンル</TableCell>
-        <TableCell align="center">貸借状態</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {rows.map((row) => (
-        <TableRow
-          key={row.name}
-          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        >
-          <TableCell component="th" scope="row">
-            <div className="img">
-              <img src={row.calories} alt="サンプル画像" />
-            </div>
-          </TableCell>
-          <TableCell align="left">{row.name}</TableCell>
-          <TableCell align="center">{row.fat}</TableCell>
-          <TableCell align="center">{row.carbs}</TableCell>
-          <TableCell align="center">{row.protein}</TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-);
-export default BasicTable;
+
+const data = [
+  {
+    id: 1,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Jon',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 2,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Cersei',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 3,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Jaime',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 4,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Arya',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 5,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Daenerys',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 6,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: null,
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 7,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Ferrara',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 8,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Rossini',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+  {
+    id: 9,
+    img: 'https://i.pinimg.com/originals/86/0b/e8/860be829f17e1c9947ed24a68b0b49b2.jpg',
+    bookName: 'Harvey',
+    difficulty: '易',
+    Genre: 'Java',
+    status: '〇',
+  },
+];
+
+const DataGridDemo: React.FC = () => {
+  const [pageSize, setPageSize] = React.useState<number>(5);
+
+  return (
+    <div style={{ height: 400, width: '100%' }}>
+      <DataGrid
+        rows={data}
+        columns={columns}
+        pageSize={pageSize}
+        onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
+        rowsPerPageOptions={[5, 10, 20]}
+        pagination
+      />
+    </div>
+  );
+};
+export default DataGridDemo;
