@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.booksearchapp.mappers.BookMapper">
+    <select id="findAll1" resultType="com.example.booksearchapp.entities.Book">
+        SELECT * FROM books
+    </select>
+
+    <!-- 書籍の一覧取得 -->
+    <select id="findAll" resultMap="bookList">
+        SELECT
+        books.id                as  books_id,
+        books.isbn_code         as  books_isbn_code,
+        books.name              as  books_name,
+        books.number            as  books_number,
+        books.image_path        as  books_image_path,
+        books.link              as  books_link,
+        books.is_deleted        as  books_is_deleted,
+        labels.id               as  labels_id,
+        labels.name             as  labels_name,
+        labels.sort_number      as  labels_sort_number,
+        labels.label_group_id   as  labels_label_group_id,
+        categories.id           as  categories_id,
+        categories.name         as  categories_name,
+        categories.id_deleted   as  categories_id_deleted,
+        labels.label_group_id   as  labels_label_group_id
+        FROM books
+        LEFT JOIN categorizations
+        ON books.id = categorizations.book_id
+        LEFT JOIN categories
+        ON categorizations.category_id = categories.id
+        LEFT JOIN book_labels
+        ON books.id = book_labels.book_id
+        LEFT JOIN labels
+        ON book_labels.label_id = labels.id
+        LEFT JOIN label_groups
+        ON labels.label_group_id = label_groups.id
+        WHERE books.is_deleted = 0;
+    </select>
+
+    <!-- 書籍の一件取得 -->
+    <select id="get" resultMap="bookList">
+        SELECT
+            books.id                as  books_id,
+            books.isbn_code         as  books_isbn_code,
+            books.name              as  books_name,
+            books.number            as  books_number,
+            books.image_path        as  books_image_path,
+            books.link              as  books_link,
+            books.is_deleted        as  books_is_deleted,
+            labels.id               as  labels_id,
+            labels.name             as  labels_name,
+            labels.sort_number      as  labels_sort_number,
+            labels.label_group_id   as  labels_label_group_id,
+            categories.id           as  categories_id,
+            categories.name         as  categories_name,
+            categories.id_deleted   as  categories_id_deleted,
+            labels.label_group_id   as  labels_label_group_id
+        FROM books
+        LEFT JOIN categorizations
+            ON books.id = categorizations.book_id
+        LEFT JOIN categories
+            ON categorizations.category_id = categories.id
+        LEFT JOIN book_labels
+            ON books.id = book_labels.book_id
+        LEFT JOIN labels
+            ON book_labels.label_id = labels.id
+        LEFT JOIN label_groups
+            ON labels.label_group_id = label_groups.id
+        WHERE books.id = #{id}
+    </select>
+
+    <!--
+    <select id="get" resultMap="bookList">
+        SELECT
+        books.id                as  books_id,
+        books.isbn_code         as  books_isbn_code,
+        books.name              as  books_name,
+        books.number            as  books_number,
+        books.image_path        as  books_image_path,
+        books.link              as  books_link,
+        books.is_deleted        as  books_is_deleted,
+        labels.id               as  labels_id,
+        labels.name             as  labels_name,
+        labels.sort_number      as  labels_sort_number,
+        labels.label_group_id   as  labels_label_group_id,
+        categories.id           as  categories_id,
+        categories.name         as  categories_name,
+        categories.id_deleted   as  categories_id_deleted,
+        labels.label_group_id   as  labels_label_group_id
+        FROM books
+        LEFT JOIN categorizations
+        ON books.id = categorizations.book_id
+        LEFT JOIN categories
+        ON categorizations.category_id = categories.id
+        LEFT JOIN book_labels
+        ON books.id = book_labels.book_id
+        LEFT JOIN labels
+        ON book_labels.label_id = labels.id
+        LEFT JOIN label_groups
+        ON labels.label_group_id = label_groups.id
+        WHERE books.id = #{id}
+    </select>
+    -->
+
+
+
+
+
+    <!-- 結合 -->
+    <resultMap type="com.example.booksearchapp.entities.Book" id="bookList">
+        <id column="books_id" property="id"/>
+        <result column="books_isbn_code" property="isbnCode"/>
+        <result column="books_name" property="name"/>
+        <result column="books_number" property="number"/>
+        <result column="books_image_path" property="imagePath"/>
+        <result column="books_link" property="link"/>
+        <result column="books_is_deleted" property="isDeleted"/>
+        <collection property="labels" ofType="com.example.booksearchapp.entities.Label">
+            <result column="labels_id" property="id"/>
+            <result column="labels_name" property="name"/>
+            <result column="labels_sort_number" property="sortNumber"/>
+            <result column="labels_label_group_id" property="labelGroupId"/>
+        </collection>
+        <collection property="categories" ofType="com.example.booksearchapp.entities.Category">
+            <result column="categories_id" property="id"/>
+            <result column="categories_name" property="name"/>
+            <result column="categories_id_deleted" property="idDeleted"/>
+            <result column="categories_sort_number" property="sortNumber"/>
+        </collection>
+    </resultMap>
+
+
+
+</mapper>

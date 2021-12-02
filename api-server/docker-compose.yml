@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8.0.25
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: book_search_db
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+    command: >
+      mysqld
+        --character-set-server=utf8
+        --collation-server=utf8_unicode_ci
+        --skip-character-set-client-handshake
+    volumes:
+      - ./docker/db/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+    restart: unless-stopped
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=db
+      - PMA_USER=test
+      - PMA_PASSWORD=test
+    ports:
+      - 8081:80
+    volumes:
+      - ./docker/phpmyadmin/sessions:/sessions
