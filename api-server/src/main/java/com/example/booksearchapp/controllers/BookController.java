@@ -1,6 +1,7 @@
 package com.example.booksearchapp.controllers;
 
 import com.example.booksearchapp.entities.Book;
+import com.example.booksearchapp.forms.SearchForm;
 import com.example.booksearchapp.responses.BookResponse;
 import com.example.booksearchapp.services.IBookService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,5 +30,11 @@ public class BookController {
     public BookResponse get(@PathVariable Integer id) {
         Book book = bookService.get(id);
         return BookResponse.from(book);
+    }
+
+    @GetMapping("/search")
+    public List<BookResponse> search(SearchForm searchForm){
+        List<Book> bookList = bookService.search(searchForm);
+        return BookResponse.from(bookList);
     }
 }

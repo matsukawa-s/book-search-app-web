@@ -8,33 +8,42 @@
     <!-- 書籍の一覧取得 -->
     <select id="findAll" resultMap="bookList">
         SELECT
-        books.id                as  books_id,
-        books.isbn_code         as  books_isbn_code,
-        books.name              as  books_name,
-        books.number            as  books_number,
-        books.image_path        as  books_image_path,
-        books.link              as  books_link,
-        books.is_deleted        as  books_is_deleted,
-        labels.id               as  labels_id,
-        labels.name             as  labels_name,
-        labels.sort_number      as  labels_sort_number,
-        labels.label_group_id   as  labels_label_group_id,
-        categories.id           as  categories_id,
-        categories.name         as  categories_name,
-        categories.id_deleted   as  categories_id_deleted,
-        labels.label_group_id   as  labels_label_group_id
+            books.id                as  books_id,
+            books.isbn_code         as  books_isbn_code,
+            books.name              as  books_name,
+            books.number            as  books_number,
+            books.image_path        as  books_image_path,
+            books.link              as  books_link,
+            books.is_deleted        as  books_is_deleted,
+            labels.id               as  labels_id,
+            labels.name             as  labels_name,
+            labels.sort_number      as  labels_sort_number,
+            labels.label_group_id   as  labels_label_group_id,
+            categories.id           as  categories_id,
+            categories.name         as  categories_name,
+            categories.id_deleted   as  categories_id_deleted,
+            categories.sort_number  as  categories_sort_number,
+            books.number - count(lendings.lending_time)  as  books_count
         FROM books
         LEFT JOIN categorizations
-        ON books.id = categorizations.book_id
+            ON books.id = categorizations.book_id
         LEFT JOIN categories
-        ON categorizations.category_id = categories.id
+            ON categorizations.category_id = categories.id
         LEFT JOIN book_labels
-        ON books.id = book_labels.book_id
+            ON books.id = book_labels.book_id
         LEFT JOIN labels
-        ON book_labels.label_id = labels.id
+            ON book_labels.label_id = labels.id
         LEFT JOIN label_groups
-        ON labels.label_group_id = label_groups.id
-        WHERE books.is_deleted = 0;
+            ON labels.label_group_id = label_groups.id
+        LEFT JOIN lendings
+            ON books.id = lendings.book_id
+        WHERE books.is_deleted = 0
+            AND lendings.return_time IS NULL
+        GROUP BY
+            books.id,
+            labels.id,
+            categories.id
+        ;
     </select>
 
     <!-- 書籍の一件取得 -->
@@ -54,7 +63,8 @@
             categories.id           as  categories_id,
             categories.name         as  categories_name,
             categories.id_deleted   as  categories_id_deleted,
-            labels.label_group_id   as  labels_label_group_id
+            categories.sort_number  as  categories_sort_number,
+            books.number - count(lendings.lending_time)  as  books_count
         FROM books
         LEFT JOIN categorizations
             ON books.id = categorizations.book_id
@@ -66,41 +76,68 @@
             ON book_labels.label_id = labels.id
         LEFT JOIN label_groups
             ON labels.label_group_id = label_groups.id
+        LEFT JOIN lendings
+            ON books.id = lendings.book_id
         WHERE books.id = #{id}
+            AND books.is_deleted = 0
+            AND lendings.return_time IS NULL
+        GROUP BY
+            books.id,
+            labels.id,
+            categories.id
     </select>
 
-    <!--
-    <select id="get" resultMap="bookList">
+    <!-- 書籍の検索 -->
+    <select id="search" parameterType="com.example.booksearchapp.forms.SearchForm" resultMap="bookList">
         SELECT
-        books.id                as  books_id,
-        books.isbn_code         as  books_isbn_code,
-        books.name              as  books_name,
-        books.number            as  books_number,
-        books.image_path        as  books_image_path,
-        books.link              as  books_link,
-        books.is_deleted        as  books_is_deleted,
-        labels.id               as  labels_id,
-        labels.name             as  labels_name,
-        labels.sort_number      as  labels_sort_number,
-        labels.label_group_id   as  labels_label_group_id,
-        categories.id           as  categories_id,
-        categories.name         as  categories_name,
-        categories.id_deleted   as  categories_id_deleted,
-        labels.label_group_id   as  labels_label_group_id
+            books.id                as  books_id,
+            books.isbn_code         as  books_isbn_code,
+            books.name              as  books_name,
+            books.number            as  books_number,
+            books.image_path        as  books_image_path,
+            books.link              as  books_link,
+            books.is_deleted        as  books_is_deleted,
+            labels.id               as  labels_id,
+            labels.name             as  labels_name,
+            labels.sort_number      as  labels_sort_number,
+            labels.label_group_id   as  labels_label_group_id,
+            categories.id           as  categories_id,
+            categories.name         as  categories_name,
+            categories.id_deleted   as  categories_id_deleted,
+            categories.sort_number  as  categories_sort_number,
+            books.number - count(lendings.lending_time)  as  books_count
         FROM books
         LEFT JOIN categorizations
-        ON books.id = categorizations.book_id
+            ON books.id = categorizations.book_id
         LEFT JOIN categories
-        ON categorizations.category_id = categories.id
+            ON categorizations.category_id = categories.id
         LEFT JOIN book_labels
-        ON books.id = book_labels.book_id
+            ON books.id = book_labels.book_id
         LEFT JOIN labels
-        ON book_labels.label_id = labels.id
+            ON book_labels.label_id = labels.id
         LEFT JOIN label_groups
-        ON labels.label_group_id = label_groups.id
-        WHERE books.id = #{id}
+            ON labels.label_group_id = label_groups.id
+        LEFT JOIN lendings
+            ON books.id = lendings.book_id
+        WHERE books.is_deleted = 0
+            AND lendings.return_time IS NULL
+        <if test="name != null and name != ''">AND books.name LIKE'%${name}%'</if>
+        <if test="label != null and label != ''">AND labels.id = #{label}</if>
+        <if test="category != null and category != ''">AND categories.id IN
+            <foreach item="category" open="(" close=")" collection="category" separator=",">
+                #{category}
+            </foreach>
+        </if>
+        GROUP BY
+            books.id,
+            labels.id,
+            categories.id
     </select>
-    -->
+
+
+
+
+
 
 
 
@@ -115,6 +152,7 @@
         <result column="books_image_path" property="imagePath"/>
         <result column="books_link" property="link"/>
         <result column="books_is_deleted" property="isDeleted"/>
+        <result column="books_count" property="booksCount"/>
         <collection property="labels" ofType="com.example.booksearchapp.entities.Label">
             <result column="labels_id" property="id"/>
             <result column="labels_name" property="name"/>

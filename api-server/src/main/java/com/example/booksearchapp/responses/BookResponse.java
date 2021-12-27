@@ -20,6 +20,7 @@ public class BookResponse {
     String link;
     List<LabelResponse> labels;
     List<CategoryResponse> categories;
+    Integer booksCount;
 
     public static BookResponse from(Book book){
         BookResponse bookResponse = new BookResponse();
@@ -31,6 +32,7 @@ public class BookResponse {
         bookResponse.setLink(book.getLink());
         bookResponse.setLabels(LabelResponse.from(book.getLabels()));
         bookResponse.setCategories(CategoryResponse.from(book.getCategories()));
+        bookResponse.setBooksCount(book.getBooksCount());
         return bookResponse;
     }
 

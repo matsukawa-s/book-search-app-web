@@ -12,9 +12,11 @@ public class Book {
     String isbnCode;
     String name;
     Integer number;
+    Integer levelId;
     String imagePath;
     String link;
     Boolean isDeleted;
     List<Label> labels;
     List<Category> categories;
+    Integer booksCount;
 }
