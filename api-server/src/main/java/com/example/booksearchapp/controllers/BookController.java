@@ -4,10 +4,7 @@ import com.example.booksearchapp.entities.Book;
 import com.example.booksearchapp.forms.SearchForm;
 import com.example.booksearchapp.responses.BookResponse;
 import com.example.booksearchapp.services.IBookService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +33,19 @@ public class BookController {
     public List<BookResponse> search(SearchForm searchForm){
         List<Book> bookList = bookService.search(searchForm);
         return BookResponse.from(bookList);
+    }
+
+    @PostMapping("/borrow")
+    @ResponseBody
+    public Integer borrow(Integer id){
+        Integer lending = bookService.borrow(id);
+        return lending;
+    }
+
+    @PostMapping("/return")
+    @ResponseBody
+    public Integer returnBook(Integer id){
+        Integer lending = bookService.returnBook(id);
+        return lending;
     }
 }

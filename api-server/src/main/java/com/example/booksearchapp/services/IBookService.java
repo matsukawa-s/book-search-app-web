@@ -9,4 +9,6 @@ public interface IBookService {
     List<Book> findAll();
     Book get(Integer id);
     List<Book> search(SearchForm searchForm);
+    Integer borrow(Integer id);
+    Integer returnBook(Integer id);
 }
