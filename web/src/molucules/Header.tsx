@@ -1,19 +1,33 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-// import MenuIcon from '@mui/icons-material/Menu';
+import { makeStyles, Theme, useTheme } from '@material-ui/core';
 
-const ButtonAppBar: React.FC = () => (
-  <>
-    <Box sx={{ flexGrow: 1 }}>
-      <AppBar
-        position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
+const useStyles = (theme: Theme) =>
+  makeStyles({
+    root: {
+      flexGrow: 1,
+    },
+    flex: {
+      flex: 1,
+    },
+    menuButton: {
+      marginLeft: -12,
+      marginRight: 20,
+    },
+    toolbarMargin: theme.mixins.toolbar,
+  });
+
+const Header: React.FC = () => {
+  const theme = useTheme();
+  const styles = useStyles(theme)();
+
+  return (
+    <>
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton
             size="large"
@@ -29,7 +43,8 @@ const ButtonAppBar: React.FC = () => (
           <Button color="inherit">Loout</Button>
         </Toolbar>
       </AppBar>
-    </Box>
-  </>
-);
-export default ButtonAppBar;
+      <div className={styles.toolbarMargin} />
+    </>
+  );
+};
+export default Header;

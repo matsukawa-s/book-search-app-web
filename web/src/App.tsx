@@ -1,7 +1,8 @@
 import React from 'react';
 import './App.css';
-import ButtonAppBar from './molucules/AppBar';
-import ClippedDrawer from './organism/Drawer';
+import Header from './molucules/Header';
+
+import Page from './organism/Page';
 
 // import Detail from './Detail';
 // import DataGridDemo from './molucules/table';
@@ -9,9 +10,9 @@ import ClippedDrawer from './organism/Drawer';
 
 const App: React.FC = () => (
   <>
-    <ButtonAppBar />
+    <Header />
 
-    <ClippedDrawer />
+    <Page />
   </>
 );
 
