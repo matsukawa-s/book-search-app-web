@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.booksearchapp.mappers.LendingAndBorrowingMapper">
+    <insert id="borrow">
+        INSERT INTO lendings VALUES (
+            NULL,
+            #{id},
+            1,
+            NOW(),
+            NULL)
+    </insert>
+
+    <update id="returnBook">
+        UPDATE lendings
+        SET return_time = NOW()
+        WHERE id = #{id}
+    </update>
+
+
+
+
+
+
+
+</mapper>
