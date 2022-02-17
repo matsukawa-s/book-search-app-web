@@ -7,6 +7,7 @@ export type Book = {
   link: null;
   labels: Label[];
   categories: Category[];
+  booksCount: number;
 };
 
 export type Label = {
@@ -20,4 +21,10 @@ export type Category = {
   id: number;
   name: string;
   sortNumber: number;
+};
+
+export type Leading = {
+  id: number;
+  lendingTime: Date;
+  book: Book;
 };
