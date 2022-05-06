@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
@@ -10,8 +11,7 @@ import {
 } from '@mui/material';
 import axios, { AxiosResponse } from 'axios';
 import { useParams } from 'react-router-dom';
-import { Message } from '@mui/icons-material';
-import { Book } from './type';
+import { Book } from '../../type';
 
 const style = {
   position: 'absolute' as const,
@@ -27,60 +27,59 @@ const style = {
 
 const Detail: React.FC = () => {
   const [book, setBook] = React.useState<Book>();
-  const [message, setMessage] = React.useState('');
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
+  const [openErrorMessage, setOpenErrorMessage] = React.useState(true);
   const urlParams = useParams<{ id: string }>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  // 本の詳細を取得する処理
+  const fetchData = async (id: string) => {
+    const res: AxiosResponse<Book> = await axios.get(
+      `http://localhost:8080/books/${id}`,
+    );
+
+    setBook(res.data);
+  };
+
   React.useEffect(() => {
-    // 本の情報取得処理
-    const fetchData = async () => {
-      if (urlParams.id === undefined) {
-        return;
-      }
-
-      const res: AxiosResponse<Book> = await axios.get(
-        `http://localhost:8080/books/${urlParams.id}`,
-      );
-
-      setBook(res.data);
-    };
-
+    if (urlParams.id === undefined) {
+      return;
+    }
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchData();
+    fetchData(urlParams.id);
   }, [urlParams]);
 
   // 借りる処理
   const StatusButton = async () => {
-    const resNumber = await axios.get('http://localhost:8080/books/borrow');
-
-    if (resNumber.status !== 200) {
-      setMessage('問題が発生がしたため借りることが出来ません。');
-
+    if (urlParams.id === undefined) {
       return;
     }
 
-    if (resNumber.data === 0) {
-      setMessage('在庫が無い為、借りることが出来ません');
-    }
+    try {
+      const resNumber = await axios.post('http://localhost:8080/books/borrow', {
+        id: Number(urlParams.id),
+      });
 
-    setOpen(false);
-    setMessage('借りました。期限は2週間です!');
+      if (resNumber.data === 0) {
+        setErrorMessage('在庫が無い為、借りることが出来ません');
+        handleClose();
 
-    // 本の情報再取得
-    const fetchData = async () => {
-      if (urlParams.id === undefined) {
         return;
       }
 
-      const res: AxiosResponse<Book> = await axios.get(
-        `http://localhost:8080/books/${urlParams.id}`,
-      );
+      handleClose();
+      setOpenErrorMessage(false);
+      setSuccessMessage('借りました。期限は2週間です!');
 
-      setBook(res.data);
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchData();
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      fetchData(urlParams.id);
+    } catch (error) {
+      setErrorMessage('問題が発生がしたため借りることが出来ません。');
+      handleClose();
+    }
   };
 
   if (book === undefined) {
@@ -93,12 +92,17 @@ const Detail: React.FC = () => {
 
   return (
     <>
+      <div>
+        {openErrorMessage && errorMessage ? (
+          <Alert severity="error">{errorMessage}</Alert>
+        ) : undefined}
+        {!openErrorMessage && successMessage ? (
+          <Alert severity="success">{successMessage}</Alert>
+        ) : undefined}
+      </div>
       <Grid container spacing={2}>
-        <Message>{message}</Message>
         <Grid item>
           <Typography variant="h3">{book.name}</Typography>
-          {/* <Typography variant="h4">{substance}</Typography> */}
-
           {book.labels.map((label) => (
             <Typography variant="h4">難易度：{label.name}</Typography>
           ))}
