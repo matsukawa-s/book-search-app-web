@@ -1,22 +1,29 @@
-import React from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import './App.css';
-import Detail from '../../organism/Detail/Detail';
-import DataGridDemo from '../../organism/BookTable/BookTable';
-import Header from '../../organism/Header';
-import Leadings from '../../organism/MyPage/Leading';
+import authContext from '../../context/authContext';
+import LoginRoute from './LoginRoute';
 
-const App: React.FC = () => (
-  <>
-    <Header />
-    <BrowserRouter>
-      <Routes>
-        <Route path="/books" element={<DataGridDemo />} />
-        <Route path="/books/:id" element={<Detail />} />
-        <Route path="/books/lending" element={<Leadings />} />
-      </Routes>
-    </BrowserRouter>
-  </>
-);
+const App: React.FC = () => {
+  const auth1 = useContext(authContext);
+  const [auth, setAuth] = useState(auth1.auth);
+  const value = {
+    auth,
+    setAuth: (a: string) => {
+      localStorage.setItem('token', a);
+      setAuth(a);
+    },
+  };
+
+  return (
+    <>
+      <authContext.Provider value={value}>
+        <BrowserRouter>
+          <LoginRoute />
+        </BrowserRouter>
+      </authContext.Provider>
+    </>
+  );
+};
 
 export default App;

@@ -1,29 +1,9 @@
 import React from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  CircularProgress,
-  Fab,
-  Grid,
-  Modal,
-  Typography,
-} from '@mui/material';
+import { Alert, CircularProgress, Fab, Grid, Typography } from '@mui/material';
 import axios, { AxiosResponse } from 'axios';
 import { useParams } from 'react-router-dom';
 import { Book } from '../../type';
-
-const style = {
-  position: 'absolute' as const,
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+import ConfirmModal from '../../parts/Modal';
 
 const Detail: React.FC = () => {
   const [book, setBook] = React.useState<Book>();
@@ -51,6 +31,22 @@ const Detail: React.FC = () => {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     fetchData(urlParams.id);
   }, [urlParams]);
+
+  // 本の履歴取得処理
+  // React.useEffect(() => {
+  //   const BookHistoryData = async (id: string) => {
+  //     const res: AxiosResponse<Book> = await axios.get(
+  //       `http://localhost:8080/bookhistory/${id}`,
+  //     );
+
+  //     setHistory(res.data);
+  //   };
+  //   if (urlParams.id === undefined) {
+  //     return;
+  //   }
+  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  //   BookHistoryData(urlParams.id);
+  // });
 
   // 借りる処理
   const StatusButton = async () => {
@@ -103,30 +99,25 @@ const Detail: React.FC = () => {
       <Grid container spacing={2}>
         <Grid item>
           <Typography variant="h3">{book.name}</Typography>
-          {book.labels.map((label) => (
-            <Typography variant="h4">難易度：{label.name}</Typography>
+          {book.tags.map((tag) => (
+            <Typography variant="h4">難易度：{tag.name}</Typography>
           ))}
 
-          {book.categories.map((category) => (
-            <Typography variant="h4">種類：{category.name}</Typography>
+          {book.genres.map((genre) => (
+            <Typography variant="h4">種類：{genre.name}</Typography>
           ))}
 
-          {/* <div>貸出：{book.}</div> */}
+          <Typography variant="h4">貸出残数：{book.booksCount}</Typography>
 
-          <Box sx={{ margin: 1 }}>
-            {/* <Typography variant="h6" gutterBottom component="div">
-                履歴
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>日付</TableCell>
-                      <TableCell>名前</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody />
-                </Table>
-              </Typography> */}
-          </Box>
+          {/* <Box sx={{ margin: 1 }}>
+            <Typography variant="h6">履歴</Typography>
+            <DataGrid
+              rows={history}
+              columns={columns}
+              disableSelectionOnClick
+              pageSize={5}
+            />
+          </Box> */}
         </Grid>
       </Grid>
       <Fab
@@ -141,19 +132,14 @@ const Detail: React.FC = () => {
       >
         借りる
       </Fab>
-      <Modal
+      <ConfirmModal
         open={open}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            借りますか？
-          </Typography>
-          <Button onClick={StatusButton}>はい</Button>
-          <Button onClick={handleClose}>いいえ</Button>
-        </Box>
-      </Modal>
+        buttonTextLeft="はい"
+        buttonTextRight="いいえ"
+        onClickLeft={StatusButton}
+        onClickRight={handleClose}
+        text="借りますか？"
+      />
     </>
   );
 };

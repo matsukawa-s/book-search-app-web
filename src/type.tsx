@@ -5,26 +5,38 @@ export type Book = {
   number: number;
   imagePath: string;
   link: null;
-  labels: Label[];
-  categories: Category[];
+  tags: Tag[];
+  genres: Genre[];
   booksCount: number;
 };
 
-export type Label = {
+export type Tag = {
   id: number;
   name: string;
   sortNumber: number;
   labelGroupId: number;
 };
 
-export type Category = {
+export type Genre = {
   id: number;
   name: string;
   sortNumber: number;
 };
 
-export type Leading = {
+export type Lending = {
   id: number;
   lendingTime: Date;
   book: Book;
 };
+
+export type History = {
+  id: number;
+  lendingTime: Date;
+  returnTime: Date;
+  book: Book;
+};
+
+// export type BookHistory = {
+//   lendingTime: Date;
+//   user:
+// };
