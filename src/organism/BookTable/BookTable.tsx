@@ -129,7 +129,6 @@ const DataGridDemo: React.FC = () => {
         <TextField inputRef={searchValue} sx={{ m: 1, minWidth: 130 }} />
         <BlueButton text="検索" onClick={searchData} />
       </div>
-
       <div style={{ height: 600, width: '100%' }}>
         <DataGrid
           rows={books}
@@ -141,4 +140,5 @@ const DataGridDemo: React.FC = () => {
     </>
   );
 };
+      
 export default DataGridDemo;
