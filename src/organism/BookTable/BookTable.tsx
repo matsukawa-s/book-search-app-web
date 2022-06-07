@@ -1,20 +1,18 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import axios, { AxiosResponse } from 'axios';
-import {
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextField,
-} from '@mui/material';
-
+import { SelectChangeEvent, TextField } from '@mui/material';
 import { useContext } from 'react';
+
 import { Book, Genre, Tag } from '../../type';
 import BlueButton from '../../parts/BlueButton';
 import columns from './columns';
 import authContext from '../../context/authContext';
+import SelectBox from '../../parts/Select';
+
+import fetchData from './Modules/fetch';
+import searchData from './Modules/search';
+import genreData from './Modules/genre';
+import tagData from './Modules/tag';
 
 const DataGridDemo: React.FC = () => {
   const auth = useContext(authContext);
@@ -33,101 +31,74 @@ const DataGridDemo: React.FC = () => {
     setTagValue(event.target.value);
   };
 
-  // 本の一覧取得処理
-  React.useEffect(() => {
-    const fetchData = async () => {
-      const res: AxiosResponse<Book[]> = await axios.get(
-        'http://localhost:8080/books',
-        {
-          headers: {
-            Authorization: auth.auth,
-          },
-        },
-      );
+  /** 本の一覧取得を行う処理 */
+  const fetchApi = async () => {
+    const fetchResult = await fetchData(auth.auth);
 
-      setBooks(res.data);
-    };
+    /** TODO:メッセージ領域追加後行う */
+    // if(!fetchResult.isSuccess){
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchData();
-  }, [auth.auth]);
-
-  // 検索結果取得処理
-  const searchData = async () => {
-    const search = await axios.get('http://localhost:8080/books/search', {
-      params: {
-        name: searchValue.current?.value,
-        tag: tagValue.length <= 0 ? undefined : tagValue,
-        genre: genresValue.length <= 0 ? undefined : genresValue,
-      },
-      headers: {
-        Authorization: auth.auth,
-      },
-    });
-    setBooks(search.data);
+    // }
+    setBooks(fetchResult.data);
   };
 
-  // カテゴリー一覧取得
-  React.useEffect(() => {
-    const genreData = async () => {
-      const genres: AxiosResponse<Genre[]> = await axios.get(
-        'http://localhost:8080/books/genres',
-        {
-          headers: {
-            Authorization: auth.auth,
-          },
-        },
-      );
+  /**  検索結果取得処理 */
+  const searchApi = async () => {
+    const searchResult = await searchData(
+      auth.auth,
+      tagValue,
+      genresValue,
+      searchValue,
+    );
+    setBooks(searchResult.data);
+  };
 
-      setGenresName(genres.data);
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    genreData();
-  });
+  /** カテゴリー一覧取得 */
+  const GenreApi = async () => {
+    const genreResult = await genreData(auth.auth);
+    setGenresName(genreResult.data);
+  };
+
+  const TagApi = async () => {
+    const tagResult = await tagData(auth.auth);
+    setTagName(tagResult.data);
+  };
+
+  React.useEffect(() => {
+    void fetchApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  React.useEffect(() => {
+    void GenreApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ラベル取得
   React.useEffect(() => {
-    const tagData = async () => {
-      const tags: AxiosResponse<Tag[]> = await axios.get(
-        'http://localhost:8080/books/tags',
-        {
-          headers: {
-            Authorization: auth.auth,
-          },
-        },
-      );
-
-      setTagName(tags.data);
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    tagData();
-  }, [auth.auth]);
+    void TagApi();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       <div>
-        <FormControl sx={{ m: 1, minWidth: 130 }}>
-          <InputLabel>難易度</InputLabel>
-          <Select value={tagValue} label="難易度" onChange={handleChange}>
-            {tagName?.map((tag) => (
-              <MenuItem value={tag.id}>{tag.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl sx={{ m: 1, minWidth: 130 }}>
-          <InputLabel>カテゴリー</InputLabel>
-          <Select
-            value={genresValue}
-            label="カテゴリー"
-            onChange={handleGenresChange}
-          >
-            {genresName?.map((genre) => (
-              <MenuItem value={genre.id}>{genre.name}</MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SelectBox
+          InputLabelName="難易度"
+          genresName={tagName}
+          label="カテゴリー"
+          onChange={handleChange}
+          value={tagValue}
+        />
+        <SelectBox
+          InputLabelName="カテゴリー"
+          genresName={genresName}
+          label="カテゴリー"
+          onChange={handleGenresChange}
+          value={genresValue}
+        />
         <TextField inputRef={searchValue} sx={{ m: 1, minWidth: 130 }} />
-        <BlueButton text="検索" onClick={searchData} />
+        <BlueButton text="検索" onClick={searchApi} />
       </div>
 
       <div style={{ height: 600, width: '100%' }}>

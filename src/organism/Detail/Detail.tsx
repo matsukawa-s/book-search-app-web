@@ -1,83 +1,77 @@
-import React from 'react';
-import { Alert, CircularProgress, Fab, Grid, Typography } from '@mui/material';
-import axios, { AxiosResponse } from 'axios';
+import React, { useContext, useCallback } from 'react';
+import {
+  Alert,
+  CircularProgress,
+  Fab,
+  FormControl,
+  FormLabel,
+  Grid,
+  Typography,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
+
 import { Book } from '../../type';
-import ConfirmModal from '../../parts/Modal';
+import ConfirmDialog from '../../parts/Dialog';
+import authContext from '../../context/authContext';
+
+import fetchData from './Modules/DetailModule';
+import borrwData from './Modules/BorrowModule';
+import Header from '../Header';
 
 const Detail: React.FC = () => {
+  const auth = useContext(authContext);
   const [book, setBook] = React.useState<Book>();
   const [errorMessage, setErrorMessage] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
-  const [openErrorMessage, setOpenErrorMessage] = React.useState(true);
   const urlParams = useParams<{ id: string }>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // 本の詳細を取得する処理
-  const fetchData = async (id: string) => {
-    const res: AxiosResponse<Book> = await axios.get(
-      `http://localhost:8080/books/${id}`,
-    );
-
-    setBook(res.data);
-  };
-
-  React.useEffect(() => {
+  /**
+   * 本の詳細を取得する処理
+   */
+  const detail = useCallback(async () => {
     if (urlParams.id === undefined) {
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchData(urlParams.id);
-  }, [urlParams]);
+    const response = await fetchData(auth.auth, urlParams.id);
 
-  // 本の履歴取得処理
-  // React.useEffect(() => {
-  //   const BookHistoryData = async (id: string) => {
-  //     const res: AxiosResponse<Book> = await axios.get(
-  //       `http://localhost:8080/bookhistory/${id}`,
-  //     );
+    if (!response.isSuccess) {
+      setErrorMessage('本のデータ取得に失敗しました。更新をしてください。');
+    }
 
-  //     setHistory(res.data);
-  //   };
-  //   if (urlParams.id === undefined) {
-  //     return;
-  //   }
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   BookHistoryData(urlParams.id);
-  // });
+    setBook(response.data);
+  }, [auth.auth, urlParams.id]);
 
-  // 借りる処理
+  React.useEffect(() => {
+    void detail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * 本を借りる処理
+   */
   const StatusButton = async () => {
     if (urlParams.id === undefined) {
       return;
     }
 
-    try {
-      const resNumber = await axios.post('http://localhost:8080/books/borrow', {
-        id: Number(urlParams.id),
-      });
+    const borrow = await borrwData(auth.auth, urlParams.id);
 
-      if (resNumber.data === 0) {
-        setErrorMessage('在庫が無い為、借りることが出来ません');
-        handleClose();
-
-        return;
-      }
-
+    if (borrow.isSuccess === false) {
+      setErrorMessage(borrow.messages);
       handleClose();
-      setOpenErrorMessage(false);
-      setSuccessMessage('借りました。期限は2週間です!');
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      fetchData(urlParams.id);
-    } catch (error) {
-      setErrorMessage('問題が発生がしたため借りることが出来ません。');
-      handleClose();
+      return;
     }
+    setSuccessMessage(borrow.messages);
+
+    void detail();
+    handleClose();
   };
 
+  // 本が未定義の場合はローディングするようにする
   if (book === undefined) {
     return (
       <>
@@ -88,26 +82,33 @@ const Detail: React.FC = () => {
 
   return (
     <>
+      <Header />
       <div>
-        {openErrorMessage && errorMessage ? (
+        {errorMessage.length > 0 ? (
           <Alert severity="error">{errorMessage}</Alert>
         ) : undefined}
-        {!openErrorMessage && successMessage ? (
+        {successMessage.length > 0 ? (
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
       </div>
       <Grid container spacing={2}>
         <Grid item>
           <Typography variant="h3">{book.name}</Typography>
+
           {book.tags.map((tag) => (
-            <Typography variant="h4">難易度：{tag.name}</Typography>
+            <Typography variant="h4">{tag.name}</Typography>
           ))}
+          <FormControl>
+            <FormLabel>種類：</FormLabel>
+            {book.genres.map((genre) => (
+              <Typography variant="h4">{genre.name}</Typography>
+            ))}
+          </FormControl>
 
-          {book.genres.map((genre) => (
-            <Typography variant="h4">種類：{genre.name}</Typography>
-          ))}
-
-          <Typography variant="h4">貸出残数：{book.booksCount}</Typography>
+          <FormControl>
+            <FormLabel>種類：</FormLabel>
+            <Typography variant="h4">貸出残数：{book.booksCount}</Typography>
+          </FormControl>
 
           {/* <Box sx={{ margin: 1 }}>
             <Typography variant="h6">履歴</Typography>
@@ -132,7 +133,7 @@ const Detail: React.FC = () => {
       >
         借りる
       </Fab>
-      <ConfirmModal
+      <ConfirmDialog
         open={open}
         buttonTextLeft="はい"
         buttonTextRight="いいえ"

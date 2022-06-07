@@ -4,8 +4,8 @@ import {
   GridColumns,
   GridRenderCellParams,
 } from '@mui/x-data-grid';
-import BlueButton from '../../parts/BlueButton';
-import { Book, Lending } from '../../type';
+import BlueButton from '../../../parts/BlueButton';
+import { Book, Lending } from '../../../type';
 
 type Params = (params: number) => Promise<void>;
 // テーブルカラム

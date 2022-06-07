@@ -2,9 +2,9 @@ import { useContext, VFC } from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import DataGridDemo from '../../organism/BookTable/BookTable';
 import Detail from '../../organism/Detail/Detail';
-import Lendings from '../../organism/MyPage/Lending';
+import Lendings from '../../organism/MyPage/Lending/Lending';
 import Login from '../Login/Login';
-import History from '../../organism/MyPage/History';
+import History from '../../organism/MyPage/History/History';
 import authContext from '../../context/authContext';
 // import PageRoute from './PageRoute';
 
@@ -13,7 +13,6 @@ function RequireAuth({ children }: { children: JSX.Element }) {
   const auth = useContext(authContext);
   const location = useLocation();
 
-  console.log(auth);
   if (auth === undefined || auth.auth === '') {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }

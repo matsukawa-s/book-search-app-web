@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { Book } from '../../type';
+import { Book } from '../../../type';
 
 const historyColumns: GridColDef[] = [
   {

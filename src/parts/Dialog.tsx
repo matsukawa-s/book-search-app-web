@@ -22,7 +22,7 @@ type ModalProps = {
   onClickRight: () => void;
 };
 
-const ConfirmModal: React.FC<ModalProps> = ({
+const ConfirmDialog: React.FC<ModalProps> = ({
   open,
   text,
   buttonTextLeft,
@@ -46,4 +46,4 @@ const ConfirmModal: React.FC<ModalProps> = ({
     </Modal>
   </>
 );
-export default ConfirmModal;
+export default ConfirmDialog;

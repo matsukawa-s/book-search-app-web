@@ -1,29 +1,35 @@
 import { Alert } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import axios, { AxiosResponse } from 'axios';
-import React from 'react';
-import { Lending } from '../../type';
+import React, { useContext } from 'react';
+import authContext from '../../../context/authContext';
+import { Lending } from '../../../type';
 import columnsGenerator from './lendingColumns';
-import MyPageLink from './MyPageLink';
+import MyPageLink from '../MyPageLink';
 
 const Lendings: React.FC = () => {
+  const auth = useContext(authContext);
   const [leadingBook, setLeadingBook] = React.useState<Lending[]>([]);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
-  const [openErrorMessage, setOpenErrorMessage] = React.useState(true);
 
   // マイページ取得処理
   React.useEffect(() => {
     const lendingData = async () => {
       const res: AxiosResponse<Lending[]> = await axios.get(
-        'http://localhost:8080/books/lending',
+        'http://localhost:8080/mypage/lending',
+        {
+          headers: {
+            Authorization: auth.auth,
+          },
+        },
       );
 
       setLeadingBook(res.data);
     };
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     lendingData();
-  });
+  }, [auth.auth]);
 
   // 返却処理
   const returnButton = async (id: number) => {
@@ -32,6 +38,9 @@ const Lendings: React.FC = () => {
         'http://localhost:8080/books/return',
         {
           id,
+          headers: {
+            Authorization: auth.auth,
+          },
         },
       );
 
@@ -41,7 +50,6 @@ const Lendings: React.FC = () => {
         return;
       }
 
-      setOpenErrorMessage(false);
       setSuccessMessage('返却しました。またのご利用お待ちしています！');
     } catch (error) {
       setErrorMessage('問題が発生がしたため借りることが出来ません。');
@@ -53,10 +61,10 @@ const Lendings: React.FC = () => {
   return (
     <>
       <div>
-        {openErrorMessage && errorMessage ? (
+        {errorMessage.length > 0 ? (
           <Alert severity="error">{errorMessage}</Alert>
         ) : undefined}
-        {!openErrorMessage && successMessage ? (
+        {successMessage.length > 0 ? (
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
       </div>
