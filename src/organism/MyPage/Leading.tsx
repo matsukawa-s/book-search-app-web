@@ -3,7 +3,7 @@ import { GridColDef, DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import axios, { AxiosResponse } from 'axios';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Leading } from '../../type';
+import { Book, Lending } from '../../type';
 
 const columns: GridColDef[] = [
   // { field: 'id', headerName: 'ID', width: 90 },
@@ -16,7 +16,7 @@ const columns: GridColDef[] = [
     field: 'book',
     headerName: '書籍名',
     width: 150,
-    renderCell: (param: GridRenderCellParams<Book, Leading>) => (
+    renderCell: (param: GridRenderCellParams<Book, Lending>) => (
       <>
         <Typography>{param.value.name}</Typography>
       </>
@@ -24,13 +24,13 @@ const columns: GridColDef[] = [
   },
 ];
 
-const Leadings: React.FC = () => {
-  const [leadingBook, setLeadingBook] = React.useState<Leading[]>([]);
+const Lendings: React.FC = () => {
+  const [leadingBook, setLeadingBook] = React.useState<Lending[]>([]);
 
   // マイページ取得処理
   React.useEffect(() => {
     const lendingData = async () => {
-      const res: AxiosResponse<Leading[]> = await axios.get(
+      const res: AxiosResponse<Lending[]> = await axios.get(
         'http://localhost:8080/books/lending',
       );
 
@@ -51,4 +51,4 @@ const Leadings: React.FC = () => {
     </>
   );
 };
-export default Leadings;
+export default Lendings;

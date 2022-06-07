@@ -57,7 +57,7 @@ const Detail: React.FC = () => {
       return;
     }
 
-    const borrow = await borrwData(auth.auth, urlParams.id);
+    const borrow = await borrwData(urlParams.id, auth.auth);
 
     if (borrow.isSuccess === false) {
       setErrorMessage(borrow.messages);
