@@ -56,7 +56,6 @@ const columns: GridColDef[] = [
       </>
     ),
   },
-
   {
     field: 'booksCount',
     headerName: '貸出残量',
