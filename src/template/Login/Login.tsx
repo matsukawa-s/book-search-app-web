@@ -33,7 +33,7 @@ const Login: React.FC = () => {
     auth?.setAuth(res.headers.authorization);
 
     const state = location.state as { from: { pathname: string } } | undefined;
-    const from = state?.from?.pathname || '/';
+    const from = state?.from?.pathname || '/books';
     navigate(from, { replace: true });
   };
 
