@@ -1,14 +1,22 @@
 import React, { useContext, useCallback } from 'react';
 import {
   Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
   CircularProgress,
-  Fab,
+  Drawer,
   FormControl,
   FormLabel,
   Grid,
+  List,
+  ListItem,
+  ListItemText,
+  Stack,
   Typography,
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 import { Book } from '../../type';
 import ConfirmDialog from '../../parts/Dialog';
@@ -80,59 +88,126 @@ const Detail: React.FC = () => {
     );
   }
 
+  // 本の説明
+  const card = (
+    <CardContent>
+      <Typography sx={{ fontSize: 18 }}>この本の概略</Typography>
+      <Typography
+        sx={{ fontSize: 15 }}
+        color="text.secondary"
+        component="div"
+        marginTop={1}
+      >
+        愛媛に暮らす中学三年生・青井葦人（あおいアシト）。粗削りながら、強烈なサッカーの才能を秘めているアシトだったが、まっすぐすぎる性格が災いして、大きな挫折を経験することに―――そんなアシトの前に、東京にある強豪Ｊクラブ「東京シティ・エスペリオン」のユースチーム監督・福田達也（ふくだたつや）が現れる。アシトの無限の可能性を見抜いた福田は、東京で開催される自チームのセレクションを受けるよう勧めて！？将来、日本のサッカーに革命を起こすことになる少年の運命は、ここから急速に回り始める！！
+      </Typography>
+    </CardContent>
+  );
+
   return (
-    <>
+    <Box>
       <Header />
-      <div>
+      <Box
+        sx={{
+          marginLeft: 28,
+        }}
+      >
         {errorMessage.length > 0 ? (
           <Alert severity="error">{errorMessage}</Alert>
         ) : undefined}
         {successMessage.length > 0 ? (
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
-      </div>
-      <Grid container spacing={2}>
-        <Grid item>
-          <Typography variant="h3">{book.name}</Typography>
-
-          {book.tags.map((tag) => (
-            <Typography variant="h4">{tag.name}</Typography>
-          ))}
-          <FormControl>
-            <FormLabel>種類：</FormLabel>
-            {book.genres.map((genre) => (
-              <Typography variant="h4">{genre.name}</Typography>
-            ))}
-          </FormControl>
-
-          <FormControl>
-            <FormLabel>種類：</FormLabel>
-            <Typography variant="h4">貸出残数：{book.booksCount}</Typography>
-          </FormControl>
-
-          {/* <Box sx={{ margin: 1 }}>
-            <Typography variant="h6">履歴</Typography>
-            <DataGrid
-              rows={history}
-              columns={columns}
-              disableSelectionOnClick
-              pageSize={5}
-            />
-          </Box> */}
-        </Grid>
-      </Grid>
-      <Fab
+      </Box>
+      <Box
         sx={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
+          marginLeft: 28,
         }}
-        color="primary"
-        variant="extended"
-        onClick={handleOpen}
       >
-        借りる
-      </Fab>
+        <Typography variant="h2">{book.name}</Typography>
+      </Box>
+      <Box>
+        <Grid container spacing={5}>
+          <Grid item xs={2}>
+            <Drawer variant="permanent">
+              <List>
+                <Link to="/books/history">
+                  <ListItem button>
+                    <ListItemText primary="トップページ" />
+                  </ListItem>
+                </Link>
+                <Link to="/products">
+                  <ListItem button>
+                    <ListItemText primary="商品ページ" />
+                  </ListItem>
+                </Link>
+              </List>
+            </Drawer>
+          </Grid>
+          <Grid item xs={5}>
+            <Box
+              sx={{
+                width: 500,
+                height: 500,
+
+                backgroundColor: 'primary.dark',
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <Stack spacing={4}>
+              <Stack spacing={10} justifyItems="center" direction="row">
+                <Box justifyItems="center">
+                  <FormLabel>種類</FormLabel>
+                </Box>
+                {book.tags.map((tag) => (
+                  <Typography variant="h4">{tag.name}</Typography>
+                ))}
+              </Stack>
+              <FormControl>
+                <Stack spacing={6} justifyItems="center" direction="row">
+                  <FormLabel>カテゴリ</FormLabel>
+                  {book.genres.map((genre) => (
+                    <>
+                      <Typography variant="h4">{genre.name}</Typography>
+                    </>
+                  ))}
+                </Stack>
+              </FormControl>
+
+              <FormControl>
+                <Stack spacing={7} justifyItems="center" direction="row">
+                  <FormLabel>貸出残数</FormLabel>
+                  <Typography variant="h4">{book.booksCount}</Typography>
+                </Stack>
+              </FormControl>
+              <Box
+                sx={{
+                  width: 500,
+                  height: 200,
+
+                  backgroundColor: 'primary.dark',
+                }}
+              />
+              <Box>
+                <Button variant="contained" onClick={handleOpen} fullWidth>
+                  借りる
+                </Button>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box
+        sx={{
+          width: '70%',
+          height: 270,
+          marginTop: 5,
+          marginLeft: 28,
+        }}
+      >
+        <Card variant="outlined">{card}</Card>
+      </Box>
+
       <ConfirmDialog
         open={open}
         buttonTextLeft="はい"
@@ -141,7 +216,7 @@ const Detail: React.FC = () => {
         onClickRight={handleClose}
         text="借りますか？"
       />
-    </>
+    </Box>
   );
 };
 export default Detail;
