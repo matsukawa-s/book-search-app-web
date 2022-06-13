@@ -6,17 +6,13 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  Drawer,
   FormControl,
   FormLabel,
   Grid,
-  List,
-  ListItem,
-  ListItemText,
   Stack,
   Typography,
 } from '@mui/material';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { Book } from '../../type';
 import ConfirmDialog from '../../parts/Dialog';
@@ -127,22 +123,7 @@ const Detail: React.FC = () => {
       </Box>
       <Box>
         <Grid container spacing={5}>
-          <Grid item xs={2}>
-            <Drawer variant="permanent">
-              <List>
-                <Link to="/books/history">
-                  <ListItem button>
-                    <ListItemText primary="トップページ" />
-                  </ListItem>
-                </Link>
-                <Link to="/products">
-                  <ListItem button>
-                    <ListItemText primary="商品ページ" />
-                  </ListItem>
-                </Link>
-              </List>
-            </Drawer>
-          </Grid>
+          <Grid item xs={2} />
           <Grid item xs={5}>
             <Box
               sx={{
