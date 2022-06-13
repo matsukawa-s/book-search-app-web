@@ -1,83 +1,81 @@
-import React from 'react';
-import { Alert, CircularProgress, Fab, Grid, Typography } from '@mui/material';
-import axios, { AxiosResponse } from 'axios';
+import React, { useContext, useCallback } from 'react';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  FormControl,
+  FormLabel,
+  Grid,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useParams } from 'react-router-dom';
+
 import { Book } from '../../type';
-import ConfirmModal from '../../parts/Modal';
+import ConfirmDialog from '../../parts/Dialog';
+import authContext from '../../context/authContext';
+
+import fetchData from './Modules/DetailModule';
+import borrwData from './Modules/BorrowModule';
+import Header from '../Header';
 
 const Detail: React.FC = () => {
+  const auth = useContext(authContext);
   const [book, setBook] = React.useState<Book>();
   const [errorMessage, setErrorMessage] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
-  const [openErrorMessage, setOpenErrorMessage] = React.useState(true);
   const urlParams = useParams<{ id: string }>();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  // 本の詳細を取得する処理
-  const fetchData = async (id: string) => {
-    const res: AxiosResponse<Book> = await axios.get(
-      `http://localhost:8080/books/${id}`,
-    );
-
-    setBook(res.data);
-  };
-
-  React.useEffect(() => {
+  /**
+   * 本の詳細を取得する処理
+   */
+  const detail = useCallback(async () => {
     if (urlParams.id === undefined) {
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    fetchData(urlParams.id);
-  }, [urlParams]);
+    const response = await fetchData(auth.auth, urlParams.id);
 
-  // 本の履歴取得処理
-  // React.useEffect(() => {
-  //   const BookHistoryData = async (id: string) => {
-  //     const res: AxiosResponse<Book> = await axios.get(
-  //       `http://localhost:8080/bookhistory/${id}`,
-  //     );
+    if (!response.isSuccess) {
+      setErrorMessage('本のデータ取得に失敗しました。更新をしてください。');
+    }
 
-  //     setHistory(res.data);
-  //   };
-  //   if (urlParams.id === undefined) {
-  //     return;
-  //   }
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   BookHistoryData(urlParams.id);
-  // });
+    setBook(response.data);
+  }, [auth.auth, urlParams.id]);
 
-  // 借りる処理
+  React.useEffect(() => {
+    void detail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * 本を借りる処理
+   */
   const StatusButton = async () => {
     if (urlParams.id === undefined) {
       return;
     }
 
-    try {
-      const resNumber = await axios.post('http://localhost:8080/books/borrow', {
-        id: Number(urlParams.id),
-      });
+    const borrow = await borrwData(urlParams.id, auth.auth);
 
-      if (resNumber.data === 0) {
-        setErrorMessage('在庫が無い為、借りることが出来ません');
-        handleClose();
-
-        return;
-      }
-
+    if (borrow.isSuccess === false) {
+      setErrorMessage(borrow.messages);
       handleClose();
-      setOpenErrorMessage(false);
-      setSuccessMessage('借りました。期限は2週間です!');
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      fetchData(urlParams.id);
-    } catch (error) {
-      setErrorMessage('問題が発生がしたため借りることが出来ません。');
-      handleClose();
+      return;
     }
+    setSuccessMessage(borrow.messages);
+
+    void detail();
+    handleClose();
   };
 
+  // 本が未定義の場合はローディングするようにする
   if (book === undefined) {
     return (
       <>
@@ -86,53 +84,112 @@ const Detail: React.FC = () => {
     );
   }
 
+  // 本の説明
+  const card = (
+    <CardContent>
+      <Typography sx={{ fontSize: 18 }}>この本の概略</Typography>
+      <Typography
+        sx={{ fontSize: 15 }}
+        color="text.secondary"
+        component="div"
+        marginTop={1}
+      >
+        愛媛に暮らす中学三年生・青井葦人（あおいアシト）。粗削りながら、強烈なサッカーの才能を秘めているアシトだったが、まっすぐすぎる性格が災いして、大きな挫折を経験することに―――そんなアシトの前に、東京にある強豪Ｊクラブ「東京シティ・エスペリオン」のユースチーム監督・福田達也（ふくだたつや）が現れる。アシトの無限の可能性を見抜いた福田は、東京で開催される自チームのセレクションを受けるよう勧めて！？将来、日本のサッカーに革命を起こすことになる少年の運命は、ここから急速に回り始める！！
+      </Typography>
+    </CardContent>
+  );
+
   return (
-    <>
-      <div>
-        {openErrorMessage && errorMessage ? (
+    <Box>
+      <Header />
+      <Box
+        sx={{
+          marginLeft: 28,
+        }}
+      >
+        {errorMessage.length > 0 ? (
           <Alert severity="error">{errorMessage}</Alert>
         ) : undefined}
-        {!openErrorMessage && successMessage ? (
+        {successMessage.length > 0 ? (
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
-      </div>
-      <Grid container spacing={2}>
-        <Grid item>
-          <Typography variant="h3">{book.name}</Typography>
-          {book.tags.map((tag) => (
-            <Typography variant="h4">難易度：{tag.name}</Typography>
-          ))}
-
-          {book.genres.map((genre) => (
-            <Typography variant="h4">種類：{genre.name}</Typography>
-          ))}
-
-          <Typography variant="h4">貸出残数：{book.booksCount}</Typography>
-
-          {/* <Box sx={{ margin: 1 }}>
-            <Typography variant="h6">履歴</Typography>
-            <DataGrid
-              rows={history}
-              columns={columns}
-              disableSelectionOnClick
-              pageSize={5}
-            />
-          </Box> */}
-        </Grid>
-      </Grid>
-      <Fab
+      </Box>
+      <Box
         sx={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
+          marginLeft: 28,
         }}
-        color="primary"
-        variant="extended"
-        onClick={handleOpen}
       >
-        借りる
-      </Fab>
-      <ConfirmModal
+        <Typography variant="h2">{book.name}</Typography>
+      </Box>
+      <Box>
+        <Grid container spacing={5}>
+          <Grid item xs={2} />
+          <Grid item xs={5}>
+            <Box
+              sx={{
+                width: 500,
+                height: 500,
+
+                backgroundColor: 'primary.dark',
+              }}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <Stack spacing={4}>
+              <Stack spacing={10} justifyItems="center" direction="row">
+                <Box justifyItems="center">
+                  <FormLabel>種類</FormLabel>
+                </Box>
+                {book.tags.map((tag) => (
+                  <Typography variant="h4">{tag.name}</Typography>
+                ))}
+              </Stack>
+              <FormControl>
+                <Stack spacing={6} justifyItems="center" direction="row">
+                  <FormLabel>カテゴリ</FormLabel>
+                  {book.genres.map((genre) => (
+                    <>
+                      <Typography variant="h4">{genre.name}</Typography>
+                    </>
+                  ))}
+                </Stack>
+              </FormControl>
+
+              <FormControl>
+                <Stack spacing={7} justifyItems="center" direction="row">
+                  <FormLabel>貸出残数</FormLabel>
+                  <Typography variant="h4">{book.booksCount}</Typography>
+                </Stack>
+              </FormControl>
+              <Box
+                sx={{
+                  width: 500,
+                  height: 200,
+
+                  backgroundColor: 'primary.dark',
+                }}
+              />
+              <Box>
+                <Button variant="contained" onClick={handleOpen} fullWidth>
+                  借りる
+                </Button>
+              </Box>
+            </Stack>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box
+        sx={{
+          width: '70%',
+          height: 270,
+          marginTop: 5,
+          marginLeft: 28,
+        }}
+      >
+        <Card variant="outlined">{card}</Card>
+      </Box>
+
+      <ConfirmDialog
         open={open}
         buttonTextLeft="はい"
         buttonTextRight="いいえ"
@@ -140,7 +197,7 @@ const Detail: React.FC = () => {
         onClickRight={handleClose}
         text="借りますか？"
       />
-    </>
+    </Box>
   );
 };
 export default Detail;

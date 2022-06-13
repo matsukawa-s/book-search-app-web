@@ -10,6 +10,11 @@ export type Book = {
   booksCount: number;
 };
 
+export type SelectType = {
+  id: number;
+  name: string;
+};
+
 export type Tag = {
   id: number;
   name: string;
