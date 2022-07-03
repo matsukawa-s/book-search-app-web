@@ -94,6 +94,7 @@ const Detail: React.FC = () => {
         marginTop={1}
       >
         ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
       </Typography>
     </CardContent>
   );
