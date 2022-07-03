@@ -1,11 +1,11 @@
 import { Alert } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import axios, { AxiosResponse } from 'axios';
+import { DataGrid, GridRenderCellParams } from '@mui/x-data-grid';
 import React, { useContext } from 'react';
 import authContext from '../../../context/authContext';
 import { Lending } from '../../../type';
 import columnsGenerator from './lendingColumns';
-import MyPageLink from '../MyPageLink';
+import lendingData from './Module/LendingModule';
+import replacementData from './Module/ReturnModule';
 
 const Lendings: React.FC = () => {
   const auth = useContext(authContext);
@@ -14,46 +14,28 @@ const Lendings: React.FC = () => {
   const [successMessage, setSuccessMessage] = React.useState('');
 
   // マイページ取得処理
-  React.useEffect(() => {
-    const lendingData = async () => {
-      const res: AxiosResponse<Lending[]> = await axios.get(
-        'http://localhost:8080/mypage/lending',
-        {
-          headers: {
-            Authorization: auth.auth,
-          },
-        },
-      );
+  const lending = async () => {
+    const response = await lendingData(auth.auth);
 
-      setLeadingBook(res.data);
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    lendingData();
-  }, [auth.auth]);
+    setLeadingBook(response.data);
+  };
+
+  React.useEffect(() => {
+    void lending();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // 返却処理
-  const returnButton = async (id: number) => {
-    try {
-      const returnData: AxiosResponse<Lending> = await axios.post(
-        'http://localhost:8080/books/return',
-        {
-          id,
-          headers: {
-            Authorization: auth.auth,
-          },
-        },
-      );
+  const returnButton = async (
+    params: GridRenderCellParams<number, Lending>,
+  ) => {
+    const replacement = await replacementData(params.row.id, auth.auth);
 
-      if (returnData.data === undefined) {
-        setErrorMessage('返却する本がが無い為、返却することが出来ません');
-
-        return;
-      }
-
-      setSuccessMessage('返却しました。またのご利用お待ちしています！');
-    } catch (error) {
-      setErrorMessage('問題が発生がしたため借りることが出来ません。');
+    if (!replacement.isSuccess) {
+      setErrorMessage(replacement.message);
     }
+
+    setSuccessMessage(replacement.message);
   };
 
   const columns = columnsGenerator(returnButton);
@@ -68,7 +50,6 @@ const Lendings: React.FC = () => {
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
       </div>
-      <MyPageLink />
       <DataGrid rows={leadingBook} columns={columns} pageSize={10} />
     </>
   );

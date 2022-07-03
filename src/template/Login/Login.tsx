@@ -29,7 +29,6 @@ const Login: React.FC = () => {
       password,
     });
 
-    console.log(res.headers.authorization);
     auth?.setAuth(res.headers.authorization);
 
     const state = location.state as { from: { pathname: string } } | undefined;

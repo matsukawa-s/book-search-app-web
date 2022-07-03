@@ -20,7 +20,6 @@ import authContext from '../../context/authContext';
 
 import fetchData from './Modules/DetailModule';
 import borrwData from './Modules/BorrowModule';
-import Header from '../Header';
 
 const Detail: React.FC = () => {
   const auth = useContext(authContext);
@@ -94,19 +93,14 @@ const Detail: React.FC = () => {
         component="div"
         marginTop={1}
       >
-        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        ああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああああ
       </Typography>
     </CardContent>
   );
 
   return (
-    <Box>
-      <Header />
-      <Box
-        sx={{
-          marginLeft: 28,
-        }}
-      >
+    <>
+      <Box>
         {errorMessage.length > 0 ? (
           <Alert severity="error">{errorMessage}</Alert>
         ) : undefined}
@@ -114,27 +108,22 @@ const Detail: React.FC = () => {
           <Alert severity="success">{successMessage}</Alert>
         ) : undefined}
       </Box>
-      <Box
-        sx={{
-          marginLeft: 28,
-        }}
-      >
+      <Box>
         <Typography variant="h2">{book.name}</Typography>
       </Box>
       <Box>
-        <Grid container spacing={5}>
-          <Grid item xs={2} />
+        <Grid container>
           <Grid item xs={5}>
             <Box
               sx={{
                 width: 500,
                 height: 500,
-
                 backgroundColor: 'primary.dark',
               }}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={1} />
+          <Grid item xs={4}>
             <Stack spacing={4}>
               <Stack spacing={10} justifyItems="center" direction="row">
                 <Box justifyItems="center">
@@ -163,7 +152,6 @@ const Detail: React.FC = () => {
               </FormControl>
               <Box
                 sx={{
-                  width: 500,
                   height: 200,
 
                   backgroundColor: 'primary.dark',
@@ -180,10 +168,7 @@ const Detail: React.FC = () => {
       </Box>
       <Box
         sx={{
-          width: '70%',
-          height: 270,
           marginTop: 5,
-          marginLeft: 28,
         }}
       >
         <Card variant="outlined">{card}</Card>
@@ -197,7 +182,7 @@ const Detail: React.FC = () => {
         onClickRight={handleClose}
         text="借りますか？"
       />
-    </Box>
+    </>
   );
 };
 export default Detail;

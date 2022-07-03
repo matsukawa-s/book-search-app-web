@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import authContext from '../../context/authContext';
-import LoginRoute from './LoginRoute';
+import Frame from '../Frame/Frame';
+// import LoginRoute from './LoginRoute';
 
 const App: React.FC = () => {
   const auth1 = useContext(authContext);
@@ -19,7 +20,7 @@ const App: React.FC = () => {
     <>
       <authContext.Provider value={value}>
         <BrowserRouter>
-          <LoginRoute />
+          <Frame />
         </BrowserRouter>
       </authContext.Provider>
     </>
