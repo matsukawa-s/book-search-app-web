@@ -34,7 +34,7 @@ export type Lending = {
   book: Book;
 };
 
-export type HistorType = {
+export type History = {
   id: number;
   lendingTime: Date;
   returnTime: Date;

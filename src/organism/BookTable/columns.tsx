@@ -21,7 +21,9 @@ const columns: GridColDef[] = [
     headerAlign: 'center',
     renderCell: (params: GridRenderCellParams<string, Book>) => (
       <>
-        <Link to={`/books/${params.row.id}`}>{params.value}</Link>
+        <Link to={`/books/${params.row.id}`} color="inherit">
+          {params.value}
+        </Link>
       </>
     ),
     width: 300,

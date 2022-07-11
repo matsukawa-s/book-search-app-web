@@ -7,7 +7,7 @@ import {
 import BlueButton from '../../../parts/BlueButton';
 import { Book, Lending } from '../../../type';
 
-type Params = (params: number) => Promise<void>;
+type Params = (params: GridRenderCellParams<number, Lending>) => Promise<void>;
 // テーブルカラム
 const columnsGenerator = (onClick: Params): GridColumns => {
   const lendingColumns: GridColDef[] = [
@@ -40,7 +40,7 @@ const columnsGenerator = (onClick: Params): GridColumns => {
           <BlueButton
             text="返却する"
             onClick={async () => {
-              await onClick(params.value);
+              await onClick(params);
             }}
           />
         </>

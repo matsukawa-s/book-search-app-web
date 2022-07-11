@@ -86,7 +86,7 @@ const DataGridDemo: React.FC = () => {
         <SelectBox
           InputLabelName="難易度"
           genresName={tagName}
-          label="カテゴリー"
+          label="難易度"
           onChange={handleChange}
           value={tagValue}
         />

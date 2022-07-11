@@ -33,7 +33,6 @@ const SelectBox: React.FC<Props> = ({
         ))}
       </Select>
     </FormControl>
-    ;
   </>
 );
 export default SelectBox;
